@@ -1,0 +1,190 @@
+{
+  "name": "NexusAI — Captación de Leads desde Landing",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "landing-nexusai",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook — Recibe Lead",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "landing-nexusai"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "1", "name": "nombre",    "value": "={{ $json.body.nombre }}",   "type": "string" },
+            { "id": "2", "name": "telefono",  "value": "={{ $json.body.telefono }}", "type": "string" },
+            { "id": "3", "name": "email",     "value": "={{ $json.body.email }}",    "type": "string" },
+            { "id": "4", "name": "negocio",   "value": "={{ $json.body.negocio }}",  "type": "string" },
+            { "id": "5", "name": "fecha",     "value": "={{ $json.body.fecha }}",    "type": "string" },
+            { "id": "6", "name": "fuente",    "value": "={{ $json.body.fuente ?? 'landing-nexusai' }}", "type": "string" },
+            { "id": "7", "name": "estado",    "value": "Nuevo",                      "type": "string" },
+            { "id": "8", "name": "fecha_registro", "value": "={{ $now.toFormat('dd/MM/yyyy HH:mm') }}", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-datos",
+      "name": "Estructurar Datos",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "mode": "id", "value": "REEMPLAZA_CON_ID_DE_TU_GOOGLE_SHEET" },
+        "sheetName": { "__rl": true, "mode": "name", "value": "Leads" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Fecha Registro": "={{ $json.fecha_registro }}",
+            "Nombre":         "={{ $json.nombre }}",
+            "Teléfono":       "={{ $json.telefono }}",
+            "Email":          "={{ $json.email }}",
+            "Negocio":        "={{ $json.negocio }}",
+            "Fuente":         "={{ $json.fuente }}",
+            "Estado":         "={{ $json.estado }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            { "id": "Fecha Registro", "displayName": "Fecha Registro", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "string" },
+            { "id": "Nombre",         "displayName": "Nombre",         "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "string" },
+            { "id": "Teléfono",       "displayName": "Teléfono",       "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "string" },
+            { "id": "Email",          "displayName": "Email",          "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "string" },
+            { "id": "Negocio",        "displayName": "Negocio",        "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "string" },
+            { "id": "Fuente",         "displayName": "Fuente",         "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "string" },
+            { "id": "Estado",         "displayName": "Estado",         "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "google-sheets-append",
+      "name": "Google Sheets — Guardar Lead",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [680, 300],
+      "credentials": { "googleSheetsOAuth2Api": { "id": "REEMPLAZA_CON_ID_CREDENCIAL_GOOGLE", "name": "Google Sheets" } }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v19.0/2312820979200180/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": []
+        },
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"34612220873\",\n  \"type\": \"text\",\n  \"text\": {\n    \"preview_url\": false,\n    \"body\": \"🔔 *NUEVO LEAD — NexusAI*\\n\\n👤 *Nombre:* {{ $json.nombre }}\\n📱 *Teléfono:* {{ $json.telefono }}\\n📧 *Email:* {{ $json.email }}\\n🏢 *Negocio:* {{ $json.negocio }}\\n📅 *Fecha:* {{ $json.fecha_registro }}\\n\\nContacta cuanto antes para cerrar la cita 🚀\"\n  }\n}",
+        "options": {}
+      },
+      "id": "whatsapp-notify",
+      "name": "WhatsApp — Notificar al Dueño",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZA_CON_ID_CREDENCIAL_WHATSAPP",
+          "name": "WhatsApp Meta Token"
+        }
+      },
+      "notes": "IMPORTANTE: Crea una credencial de tipo 'Header Auth' con Name=Authorization y Value=Bearer TU_TOKEN_META. Revoca el token anterior y genera uno nuevo en Meta Business Manager."
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"message\": \"Lead registrado correctamente\",\n  \"nombre\": \"{{ $('Estructurar Datos').item.json.nombre }}\"\n}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "*" },
+              { "name": "Content-Type", "value": "application/json" }
+            ]
+          }
+        }
+      },
+      "id": "respond-ok",
+      "name": "Responder OK al Formulario",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"success\": false, \"message\": \"Error al procesar el lead\" }",
+        "options": {
+          "responseCode": 500,
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "*" }
+            ]
+          }
+        }
+      },
+      "id": "respond-error",
+      "name": "Responder Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1120, 480]
+    },
+    {
+      "parameters": {
+        "errorMessage": "Error en el flujo de captación de leads"
+      },
+      "id": "error-trigger",
+      "name": "Error Handler",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [900, 480]
+    }
+  ],
+  "connections": {
+    "Webhook — Recibe Lead": {
+      "main": [[{ "node": "Estructurar Datos", "type": "main", "index": 0 }]]
+    },
+    "Estructurar Datos": {
+      "main": [[{ "node": "Google Sheets — Guardar Lead", "type": "main", "index": 0 }]]
+    },
+    "Google Sheets — Guardar Lead": {
+      "main": [[{ "node": "WhatsApp — Notificar al Dueño", "type": "main", "index": 0 }]]
+    },
+    "WhatsApp — Notificar al Dueño": {
+      "main": [[{ "node": "Responder OK al Formulario", "type": "main", "index": 0 }]]
+    },
+    "Error Handler": {
+      "main": [[{ "node": "Responder Error", "type": "main", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [{ "name": "NexusAI" }, { "name": "Leads" }],
+  "meta": {
+    "instanceId": "nexusai-landing",
+    "templateCredsSetupCompleted": false
+  },
+  "versionId": "1.0.0"
+}

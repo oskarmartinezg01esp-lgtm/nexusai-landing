@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusAI — Diseño Web SEO, Meta Ads y Automatización con IA</title>
+    <meta name="description" content="Potenciamos tu negocio con diseño web optimizado para Google, campañas efectivas de Meta Ads y asistentes virtuales con IA para automatizar tus citas y leads. ¡Contáctanos!">
+    <meta name="keywords" content="diseño web SEO, automatización de negocios, Meta Ads, asistentes virtuales IA, agencia digital">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --ink:     #080810;
+            --ink2:    #0d0d1a;
+            --ink3:    #12121f;
+            --blue:    #2563eb;
+            --blue-hi: #60a5fa;
+            --orange:  #f97316;
+            --orange-hi:#fb923c;
+            --line:    rgba(255,255,255,0.06);
+            --dim:     #4b5563;
+            --muted:   #6b7280;
+            --light:   #e2e8f0;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--ink);
+            color: var(--light);
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* ── Custom cursor ── */
+        #cursor {
+            position: fixed; z-index: 10000; pointer-events: none;
+            width: 10px; height: 10px;
+            background: var(--orange);
+            border-radius: 50%;
+            transform: translate(-50%,-50%);
+            transition: width .2s, height .2s, background .2s;
+            mix-blend-mode: exclusion;
+        }
+        #cursor-ring {
+            position: fixed; z-index: 9999; pointer-events: none;
+            width: 36px; height: 36px;
+            border: 1.5px solid rgba(249,115,22,0.5);
+            border-radius: 50%;
+            transform: translate(-50%,-50%);
+            transition: width .35s, height .35s, border-color .2s, transform .1s;
+        }
+        body:has(a:hover) #cursor, body:has(button:hover) #cursor { width: 20px; height: 20px; }
+        body:has(a:hover) #cursor-ring, body:has(button:hover) #cursor-ring { width: 56px; height: 56px; border-color: rgba(249,115,22,0.8); }
+
+        /* ── Noise grain ── */
+        body::after {
+            content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9998;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: .5;
+        }
+
+        /* ── Typography ── */
+        .display { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.02em; line-height: .92; }
+        .tag {
+            font-family: 'Outfit', sans-serif;
+            font-size: .7rem; font-weight: 600;
+            letter-spacing: .18em; text-transform: uppercase;
+            color: var(--orange); display: inline-flex; align-items: center; gap: 8px;
+        }
+        .tag::before { content: ''; display: block; width: 20px; height: 1px; background: var(--orange); }
+
+        /* ── Dividers ── */
+        .hdiv { border: none; height: 1px; background: var(--line); }
+
+        /* ── Navbar ── */
+        #nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+            padding: 1.5rem 0;
+            transition: padding .4s, background .4s, border-color .4s;
+            border-bottom: 1px solid transparent;
+        }
+        #nav.stuck {
+            padding: .9rem 0;
+            background: rgba(8,8,16,.88);
+            backdrop-filter: blur(20px);
+            border-color: var(--line);
+        }
+        .nav-inner {
+            max-width: 1280px; margin: 0 auto; padding: 0 2rem;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: .06em; display:flex; align-items:center; gap:.6rem; text-decoration:none; }
+        .logo span { color: var(--orange); }
+        .nav-links { display: flex; align-items: center; gap: 2.5rem; }
+        .nav-links a { font-size: .875rem; font-weight: 500; color: var(--muted); transition: color .2s; }
+        .nav-links a:hover { color: #fff; }
+        .btn-nav {
+            font-family: 'Outfit', sans-serif; font-weight: 600; font-size: .8rem;
+            letter-spacing: .06em; text-transform: uppercase;
+            padding: .6rem 1.4rem; border-radius: 6px;
+            background: var(--orange); color: #fff;
+            transition: background .2s, transform .2s, box-shadow .2s;
+            box-shadow: 0 0 20px rgba(249,115,22,.3);
+        }
+        .btn-nav:hover { background: var(--orange-hi); transform: translateY(-1px); box-shadow: 0 4px 24px rgba(249,115,22,.45); }
+        #mob-btn { display: none; background: none; border: none; color: var(--muted); cursor: none; font-size: 1.2rem; }
+        #mob-menu {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--ink2); z-index: 800; flex-direction: column;
+            align-items: center; justify-content: center; gap: 2rem;
+        }
+        #mob-menu.open { display: flex; }
+        #mob-menu a { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: .05em; color: #fff; }
+
+        /* ── Hero ── */
+        #hero {
+            min-height: 100vh; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 0 0 6rem;
+        }
+        .hero-bg {
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 70% 40%, rgba(37,99,235,.18) 0%, transparent 60%),
+                        radial-gradient(ellipse 50% 40% at 10% 80%, rgba(249,115,22,.1) 0%, transparent 50%),
+                        var(--ink);
+        }
+        /* Animated grid */
+        .hero-grid {
+            position: absolute; inset: 0;
+            background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+            background-size: 80px 80px;
+            mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+            animation: gridPan 20s linear infinite;
+        }
+        @keyframes gridPan { from { background-position: 0 0; } to { background-position: 80px 80px; } }
+
+        /* Glowing lines */
+        .glow-line {
+            position: absolute; height: 1px; pointer-events: none;
+            background: linear-gradient(90deg, transparent, var(--blue), transparent);
+            animation: lineScan 6s ease-in-out infinite;
+        }
+        .glow-line:nth-child(1) { width: 60%; top: 30%; left: 20%; animation-delay: 0s; }
+        .glow-line:nth-child(2) { width: 40%; top: 55%; left: 40%; animation-delay: 2s; }
+        .glow-line:nth-child(3) { width: 70%; top: 75%; left: 10%; animation-delay: 4s; }
+        @keyframes lineScan { 0%,100% { opacity: 0; transform: scaleX(.3); } 50% { opacity: 1; transform: scaleX(1); } }
+
+        .hero-content { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; padding: 0 2rem; width: 100%; }
+        .hero-eyebrow { margin-bottom: 1.5rem; }
+        .hero-h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(4rem, 11vw, 10rem); line-height: .88; margin-bottom: 2rem; }
+        .hero-h1 .word-orange { color: var(--orange); }
+        .hero-h1 .word-stroke {
+            -webkit-text-stroke: 1.5px rgba(255,255,255,.3);
+            color: transparent;
+        }
+        .hero-sub { max-width: 520px; color: var(--muted); font-size: 1.05rem; line-height: 1.7; margin-bottom: 2.5rem; font-weight: 300; }
+        .hero-sub strong { color: var(--light); font-weight: 500; }
+        .hero-cta-row { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; }
+        .btn-primary {
+            font-family: 'Outfit', sans-serif; font-weight: 600; font-size: .9rem;
+            letter-spacing: .04em;
+            padding: .9rem 2.2rem; border-radius: 8px;
+            background: var(--orange); color: #fff;
+            display: inline-flex; align-items: center; gap: .5rem;
+            transition: transform .2s, box-shadow .2s;
+            box-shadow: 0 0 30px rgba(249,115,22,.35);
+        }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 40px rgba(249,115,22,.5); }
+        .btn-ghost {
+            font-family: 'Outfit', sans-serif; font-weight: 500; font-size: .9rem;
+            padding: .9rem 2rem; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,.12); color: var(--light);
+            display: inline-flex; align-items: center; gap: .5rem;
+            transition: border-color .2s, background .2s, transform .2s;
+        }
+        .btn-ghost:hover { border-color: rgba(255,255,255,.3); background: rgba(255,255,255,.04); transform: translateY(-2px); }
+
+        /* Hero stats strip */
+        .stats-strip {
+            position: relative; z-index: 2; max-width: 1280px; margin: 4rem auto 0; padding: 0 2rem;
+            display: grid; grid-template-columns: repeat(3,1fr);
+            border-top: 1px solid var(--line);
+            padding-top: 2.5rem; gap: 2rem;
+        }
+        .stat-num {
+            font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem);
+            line-height: 1; display: block; margin-bottom: .25rem;
+        }
+        .stat-label { font-size: .75rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+
+        /* ── Marquee ── */
+        .marquee-wrap { overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: .9rem 0; background: var(--ink2); }
+        .marquee-track { display: flex; gap: 3rem; animation: marquee 22s linear infinite; width: max-content; }
+        .marquee-track:hover { animation-play-state: paused; }
+        @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        .marquee-item { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: .1em; color: var(--dim); display: flex; align-items: center; gap: 1rem; white-space: nowrap; }
+        .marquee-dot { width: 5px; height: 5px; background: var(--orange); border-radius: 50%; flex-shrink: 0; }
+
+        /* ── Sections ── */
+        .section { max-width: 1280px; margin: 0 auto; padding: 7rem 2rem; }
+        .section-header { margin-bottom: 4rem; }
+
+        /* ── Services ── */
+        .services-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5px; background: var(--line); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+        .svc-card {
+            background: var(--ink2); padding: 2.5rem;
+            transition: background .3s;
+            position: relative; overflow: hidden;
+        }
+        .svc-card:hover { background: var(--ink3); }
+        .svc-card::after {
+            content: '';
+            position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, var(--blue), var(--orange));
+            transform: scaleX(0); transform-origin: left;
+            transition: transform .4s;
+        }
+        .svc-card:hover::after { transform: scaleX(1); }
+        .svc-num {
+            font-family: 'Bebas Neue', sans-serif; font-size: 5rem; line-height: 1;
+            color: rgba(255,255,255,.05); margin-bottom: -1rem; display: block;
+        }
+        .svc-icon { width: 48px; height: 48px; border-radius: 10px; border: 1px solid rgba(37,99,235,.3); background: rgba(37,99,235,.08); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--blue-hi); margin-bottom: 1.25rem; }
+        .svc-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: .03em; margin-bottom: .75rem; color: #fff; line-height: 1.1; }
+        .svc-text { font-size: .875rem; color: var(--muted); line-height: 1.7; font-weight: 300; }
+        .svc-list { margin-top: 1.25rem; display: flex; flex-direction: column; gap: .5rem; }
+        .svc-list li { font-size: .8rem; color: var(--dim); display: flex; align-items: center; gap: .5rem; }
+        .svc-list li::before { content: '→'; color: var(--orange); font-size: .75rem; }
+
+        /* ── AI Demo ── */
+        .demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+        .feature-list { display: flex; flex-direction: column; gap: 1.5rem; margin: 2rem 0 2.5rem; }
+        .feat-row { display: flex; align-items: flex-start; gap: 1rem; }
+        .feat-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: .875rem; flex-shrink: 0; margin-top: 2px; }
+        .feat-icon.blue { background: rgba(37,99,235,.12); border: 1px solid rgba(37,99,235,.25); color: var(--blue-hi); }
+        .feat-icon.green { background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.2); color: #4ade80; }
+        .feat-icon.purple { background: rgba(167,139,250,.08); border: 1px solid rgba(167,139,250,.2); color: #a78bfa; }
+        .feat-body h4 { font-size: .9rem; font-weight: 600; color: #fff; margin-bottom: .2rem; }
+        .feat-body p { font-size: .825rem; color: var(--muted); line-height: 1.6; font-weight: 300; }
+
+        /* Chat */
+        .chat-shell {
+            border: 1px solid rgba(37,99,235,.2); border-radius: 16px; overflow: hidden;
+            box-shadow: 0 40px 100px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
+            background: #0c1324;
+        }
+        .chat-top {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+            padding: 1rem 1.25rem; display: flex; align-items: center; gap: .75rem;
+        }
+        .chat-avatar { width: 34px; height: 34px; border-radius: 50%; background: rgba(249,115,22,.15); border: 2px solid var(--orange); display: flex; align-items: center; justify-content: center; font-size: .8rem; color: var(--orange); }
+        .chat-name { font-weight: 600; font-size: .875rem; color: #fff; }
+        .chat-status { font-size: .7rem; color: rgba(255,255,255,.5); display: flex; align-items: center; gap: .3rem; }
+        .online-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
+        .chat-msgs { padding: 1.25rem; display: flex; flex-direction: column; gap: .75rem; }
+        .cm { max-width: 82%; font-size: .8rem; line-height: 1.55; padding: .6rem .9rem; border-radius: 12px; }
+        .cm-bot { background: rgba(37,99,235,.14); border: 1px solid rgba(37,99,235,.2); align-self: flex-start; border-radius: 3px 12px 12px 12px; color: #cbd5e1; }
+        .cm-user { background: rgba(249,115,22,.12); border: 1px solid rgba(249,115,22,.22); align-self: flex-end; border-radius: 12px 3px 12px 12px; color: #fed7aa; }
+        .typing-dots { display: flex; gap: 4px; padding: .6rem .9rem; }
+        .td { width: 6px; height: 6px; border-radius: 50%; background: var(--blue-hi); animation: tdBlink 1.4s ease-in-out infinite; }
+        .td:nth-child(2) { animation-delay: .2s; }
+        .td:nth-child(3) { animation-delay: .4s; }
+        @keyframes tdBlink { 0%,80%,100% { opacity: .25; transform: scale(.8); } 40% { opacity: 1; transform: scale(1); } }
+        .chat-input-row { padding: .75rem 1rem; border-top: 1px solid rgba(255,255,255,.05); display: flex; gap: .5rem; align-items: center; background: rgba(0,0,0,.2); }
+        .chat-inp { flex: 1; background: transparent; border: none; outline: none; color: var(--muted); font-size: .8rem; font-family: 'Outfit',sans-serif; }
+        .chat-send { width: 30px; height: 30px; border-radius: 8px; background: rgba(37,99,235,.3); border: none; color: var(--blue-hi); font-size: .75rem; display: flex; align-items: center; justify-content: center; opacity: .5; cursor: default; }
+        .chat-note { text-align: center; font-size: .65rem; color: var(--dim); padding: .5rem; }
+
+        /* ── Process ── */
+        .process-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 3rem; }
+        .proc-item { position: relative; }
+        .proc-item:not(:last-child)::after {
+            content: ''; position: absolute; top: 1.2rem; left: calc(100% + 0px); right: 0;
+            height: 1px; background: linear-gradient(90deg, var(--line), transparent);
+            width: calc(100% - 3rem);
+        }
+        .proc-num { font-family: 'Bebas Neue', sans-serif; font-size: 5rem; color: rgba(37,99,235,.12); line-height: 1; }
+        .proc-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: .03em; color: #fff; margin-bottom: .5rem; }
+        .proc-text { font-size: .825rem; color: var(--muted); line-height: 1.7; font-weight: 300; }
+
+        /* ── Contact ── */
+        .contact-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 5rem; align-items: start; }
+        .form-wrap {
+            background: var(--ink2); border: 1px solid var(--line); border-radius: 16px; padding: 2.5rem;
+            position: relative; overflow: hidden;
+        }
+        .form-wrap::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(37,99,235,.6), rgba(249,115,22,.4), transparent);
+        }
+        .fi { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1.25rem; }
+        .fi label { font-size: .75rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+        .fi input, .fi textarea {
+            background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+            border-radius: 8px; padding: .75rem 1rem; color: #fff;
+            font-family: 'Outfit', sans-serif; font-size: .875rem;
+            transition: border-color .2s, box-shadow .2s; outline: none; width: 100%;
+        }
+        .fi input::placeholder, .fi textarea::placeholder { color: rgba(255,255,255,.2); }
+        .fi input:focus, .fi textarea:focus {
+            border-color: rgba(37,99,235,.5);
+            box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+        }
+        .fi textarea { resize: none; }
+        .btn-submit {
+            width: 100%; padding: 1rem; border-radius: 8px;
+            background: var(--orange); color: #fff; border: none;
+            font-family: 'Outfit', sans-serif; font-weight: 600; font-size: .95rem;
+            letter-spacing: .03em; cursor: none;
+            display: flex; align-items: center; justify-content: center; gap: .5rem;
+            transition: transform .2s, box-shadow .2s;
+            box-shadow: 0 0 24px rgba(249,115,22,.3);
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 32px rgba(249,115,22,.5); }
+        .privacy { font-size: .7rem; color: var(--dim); text-align: center; margin-top: .75rem; }
+        .msg-ok { display: none; text-align: center; padding: .75rem; border-radius: 8px; background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.2); color: #4ade80; font-size: .825rem; margin-top: .75rem; }
+        .msg-err { display: none; text-align: center; padding: .75rem; border-radius: 8px; background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.2); color: #f87171; font-size: .825rem; margin-top: .75rem; }
+
+        .contact-info { display: flex; flex-direction: column; gap: 1rem; }
+        .info-card {
+            background: var(--ink2); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem;
+            display: flex; align-items: center; gap: 1rem;
+            transition: border-color .2s;
+        }
+        .info-card:hover { border-color: rgba(37,99,235,.3); }
+        .info-ic { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+        .info-ic.wa { background: rgba(37,211,102,.08); border: 1px solid rgba(37,211,102,.2); color: #4ade80; }
+        .info-ic.bl { background: rgba(37,99,235,.1); border: 1px solid rgba(37,99,235,.2); color: var(--blue-hi); }
+        .info-text strong { display: block; font-size: .875rem; color: #fff; font-weight: 500; margin-bottom: .1rem; }
+        .info-text span { font-size: .8rem; color: var(--muted); }
+        .big-cta-box {
+            background: linear-gradient(135deg, rgba(37,99,235,.15), rgba(249,115,22,.08));
+            border: 1px solid rgba(37,99,235,.25); border-radius: 16px; padding: 2rem;
+            text-align: center; margin-top: 1rem;
+        }
+        .big-cta-box h3 { font-family: 'Bebas Neue',sans-serif; font-size: 2rem; letter-spacing: .03em; color: #fff; margin-bottom: .5rem; }
+        .big-cta-box p { font-size: .825rem; color: var(--muted); margin-bottom: 1.25rem; }
+
+        /* ── Footer ── */
+        footer {
+            border-top: 1px solid var(--line);
+            background: var(--ink2);
+        }
+        .foot-inner { max-width: 1280px; margin: 0 auto; padding: 2.5rem 2rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+        .foot-logo { font-family: 'Bebas Neue',sans-serif; font-size: 2rem; letter-spacing: .06em; }
+        .foot-logo span { color: var(--orange); }
+        .foot-links { display: flex; gap: 2rem; }
+        .foot-links a { font-size: .8rem; color: var(--dim); transition: color .2s; }
+        .foot-links a:hover { color: #fff; }
+        .foot-copy { font-size: .75rem; color: rgba(255,255,255,.2); }
+
+        /* ── Pricing ── */
+        .pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
+        .price-card {
+            background:var(--ink2); border:1px solid var(--line); border-radius:16px;
+            padding:2rem; position:relative; overflow:hidden;
+            transition:border-color .3s, transform .3s, box-shadow .3s;
+        }
+        .price-card:hover { border-color:rgba(37,99,235,.4); transform:translateY(-4px); box-shadow:0 20px 60px rgba(37,99,235,.12); }
+        .price-card.featured {
+            border-color:rgba(249,115,22,.4);
+            background:linear-gradient(160deg,rgba(249,115,22,.07) 0%,var(--ink2) 60%);
+        }
+        .price-card.featured:hover { border-color:rgba(249,115,22,.7); box-shadow:0 20px 60px rgba(249,115,22,.15); }
+        .price-badge {
+            position:absolute; top:1.25rem; right:1.25rem;
+            background:var(--orange); color:#fff;
+            font-size:.65rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+            padding:.25rem .6rem; border-radius:20px;
+        }
+        .price-icon { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; margin-bottom:1.25rem; }
+        .price-name { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:.03em; color:#fff; margin-bottom:.25rem; }
+        .price-amount { font-family:'Bebas Neue',sans-serif; font-size:3rem; color:#fff; line-height:1; }
+        .price-amount span { font-family:'Outfit',sans-serif; font-size:1rem; color:var(--muted); font-weight:400; }
+        .price-desc { font-size:.825rem; color:var(--muted); margin:1rem 0 1.25rem; line-height:1.6; }
+        .price-features { list-style:none; display:flex; flex-direction:column; gap:.6rem; margin-bottom:1.75rem; }
+        .price-features li { font-size:.825rem; color:var(--light); display:flex; align-items:flex-start; gap:.5rem; line-height:1.5; }
+        .price-features li::before { content:'✓'; color:var(--orange); font-weight:700; flex-shrink:0; }
+        .btn-price {
+            width:100%; padding:.8rem; border-radius:8px; text-align:center;
+            font-family:'Outfit',sans-serif; font-weight:600; font-size:.85rem; letter-spacing:.03em;
+            display:block; transition:transform .2s, box-shadow .2s, background .2s;
+        }
+        .btn-price-outline { border:1px solid rgba(37,99,235,.4); color:var(--blue-hi); }
+        .btn-price-outline:hover { background:rgba(37,99,235,.1); transform:translateY(-2px); }
+        .btn-price-solid { background:var(--orange); color:#fff; box-shadow:0 0 20px rgba(249,115,22,.3); }
+        .btn-price-solid:hover { transform:translateY(-2px); box-shadow:0 6px 28px rgba(249,115,22,.5); }
+
+        /* ── Testimonials ── */
+        .testi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
+        .testi-card {
+            background:var(--ink2); border:1px solid var(--line); border-radius:16px; padding:2rem;
+            display:flex; flex-direction:column; gap:1rem;
+            transition:border-color .3s;
+        }
+        .testi-card:hover { border-color:rgba(37,99,235,.3); }
+        .testi-stars { color:var(--orange); font-size:.85rem; letter-spacing:.1em; }
+        .testi-text { font-size:.875rem; color:var(--muted); line-height:1.75; font-style:italic; font-weight:300; flex:1; }
+        .testi-text::before { content:'"'; font-size:2rem; color:var(--orange); opacity:.4; line-height:0; vertical-align:-.5rem; margin-right:.2rem; font-style:normal; }
+        .testi-author { display:flex; align-items:center; gap:.75rem; border-top:1px solid var(--line); padding-top:1rem; }
+        .testi-avatar { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:#fff; flex-shrink:0; }
+        .testi-name { font-size:.875rem; font-weight:600; color:#fff; }
+        .testi-role { font-size:.75rem; color:var(--dim); }
+
+        /* ── FAQ ── */
+        .faq-list { display:flex; flex-direction:column; gap:.75rem; max-width:800px; margin:0 auto; }
+        .faq-item { background:var(--ink2); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+        .faq-q {
+            width:100%; background:none; border:none; color:#fff; text-align:left;
+            font-family:'Outfit',sans-serif; font-size:.95rem; font-weight:500;
+            padding:1.25rem 1.5rem; cursor:none;
+            display:flex; justify-content:space-between; align-items:center; gap:1rem;
+        }
+        .faq-q:hover { color:var(--blue-hi); }
+        .faq-icon { color:var(--orange); font-size:.8rem; transition:transform .3s; flex-shrink:0; }
+        .faq-item.open .faq-icon { transform:rotate(45deg); }
+        .faq-a {
+            max-height:0; overflow:hidden;
+            font-size:.875rem; color:var(--muted); line-height:1.75; font-weight:300;
+            transition:max-height .35s ease, padding .35s ease;
+            padding:0 1.5rem;
+        }
+        .faq-item.open .faq-a { max-height:300px; padding:0 1.5rem 1.25rem; }
+
+        @media(max-width:900px){
+            .pricing-grid { grid-template-columns:1fr; }
+            .testi-grid { grid-template-columns:1fr; }
+        }
+
+        /* ── WA float ── */
+        #wa {
+            position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+            width: 54px; height: 54px; border-radius: 50%;
+            background: #25d366;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; color: #fff;
+            box-shadow: 0 4px 24px rgba(37,211,102,.4);
+            transition: transform .2s, box-shadow .2s;
+        }
+        #wa:hover { transform: scale(1.12); box-shadow: 0 8px 32px rgba(37,211,102,.6); }
+        #wa-label {
+            position: fixed; bottom: 2rem; right: 5rem; z-index: 999;
+            background: #25d366; color: #fff;
+            font-size: .75rem; font-weight: 600; padding: .4rem .85rem;
+            border-radius: 6px; opacity: 0; pointer-events: none; white-space: nowrap;
+            transition: opacity .2s;
+        }
+        #wa:hover ~ #wa-label { opacity: 1; }
+
+        /* ── Reveal ── */
+        .r { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+        .r.in { opacity: 1; transform: none; }
+        .r.d1 { transition-delay: .1s; }
+        .r.d2 { transition-delay: .2s; }
+        .r.d3 { transition-delay: .3s; }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .services-grid { grid-template-columns: 1fr; }
+            .demo-grid { grid-template-columns: 1fr; gap: 3rem; }
+            .process-row { grid-template-columns: 1fr; gap: 2rem; }
+            .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+            .proc-item::after { display: none; }
+            .stats-strip { grid-template-columns: 1fr; gap: 1.5rem; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            #mob-btn { display: block; }
+            .hero-h1 { font-size: clamp(3rem, 13vw, 6rem); }
+            .section { padding: 5rem 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- ══════════════ NAVBAR ══════════════ -->
+<nav id="nav" aria-label="Navegación principal">
+    <div class="nav-inner">
+        <a href="#" class="logo" aria-label="NexusAI - Inicio">
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect width="36" height="36" rx="9" fill="url(#lg)"/>
+                <circle cx="10" cy="18" r="3" fill="white" opacity=".9"/>
+                <circle cx="26" cy="10" r="3" fill="white" opacity=".9"/>
+                <circle cx="26" cy="26" r="3" fill="white" opacity=".9"/>
+                <line x1="12.6" y1="16.6" x2="23.4" y2="11.4" stroke="white" stroke-width="1.5" stroke-opacity=".6"/>
+                <line x1="12.6" y1="19.4" x2="23.4" y2="24.6" stroke="white" stroke-width="1.5" stroke-opacity=".6"/>
+                <line x1="26" y1="13" x2="26" y2="23" stroke="white" stroke-width="1.5" stroke-opacity=".35"/>
+                <defs>
+                    <linearGradient id="lg" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#2563eb"/>
+                        <stop offset="1" stop-color="#f97316"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            Nexus<span>AI</span>
+        </a>
+        <div class="nav-links">
+            <a href="#servicios">Servicios</a>
+            <a href="#asistente">Asistente IA</a>
+            <a href="#precios">Precios</a>
+            <a href="#faq">FAQ</a>
+            <a href="#contacto">Contacto</a>
+            <a href="#contacto" class="btn-nav">Auditoría Gratis</a>
+        </div>
+        <button id="mob-btn" aria-label="Abrir menú"><i class="fas fa-bars"></i></button>
+    </div>
+</nav>
+
+<!-- Mobile menu -->
+<div id="mob-menu" aria-label="Menú móvil">
+    <button id="mob-close" style="position:absolute;top:1.5rem;right:1.5rem;background:none;border:none;color:#fff;font-size:1.5rem;cursor:none"><i class="fas fa-xmark"></i></button>
+    <a href="#servicios" class="mob-link">Servicios</a>
+    <a href="#asistente" class="mob-link">Asistente IA</a>
+    <a href="#precios" class="mob-link">Precios</a>
+    <a href="#faq" class="mob-link">FAQ</a>
+    <a href="#contacto" class="mob-link">Contacto</a>
+    <a href="#contacto" class="btn-nav mt-4">Auditoría Gratis</a>
+</div>
+
+
+<!-- ══════════════ HERO ══════════════ -->
+<header id="hero" aria-label="Sección principal">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="glow-line"></div>
+    <div class="glow-line"></div>
+    <div class="glow-line"></div>
+
+    <div class="hero-content" style="padding-top:10rem">
+        <p class="tag hero-eyebrow r">Agencia Digital · IA · Automatización</p>
+        <h1 class="hero-h1 r d1">
+            Transformamos<br>
+            tu <span class="word-orange">Presencia</span><br>
+            <span class="word-stroke">Digital</span> en una<br>
+            Máquina de Ventas.
+        </h1>
+        <p class="hero-sub r d2">
+            <strong>Diseño Web SEO-Friendly</strong>, campañas de <strong>Meta Ads</strong> de alto rendimiento y <strong>Asistentes Virtuales con IA</strong> que trabajan 24/7. Todo lo que tu negocio necesita para escalar.
+        </p>
+        <div class="hero-cta-row r d3">
+            <a href="#contacto" class="btn-primary" aria-label="Solicitar auditoría gratuita">
+                <i class="fas fa-rocket"></i> Solicitar Auditoría Gratuita
+            </a>
+            <a href="#servicios" class="btn-ghost">
+                Ver Servicios <i class="fas fa-arrow-down fa-xs"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="stats-strip">
+        <div class="stat-item r">
+            <span class="stat-num text-white" data-count="200" data-prefix="+">0</span>
+            <span class="stat-label">Clientes satisfechos</span>
+        </div>
+        <div class="stat-item r d1">
+            <span class="stat-num" style="color:var(--orange)" data-count="500" data-prefix="+" data-suffix="%">0</span>
+            <span class="stat-label">ROI promedio generado</span>
+        </div>
+        <div class="stat-item r d2">
+            <span class="stat-num" style="color:var(--blue-hi)">24/7</span>
+            <span class="stat-label">Disponibilidad del sistema</span>
+        </div>
+    </div>
+</header>
+
+
+<!-- ══════════════ MARQUEE ══════════════ -->
+<div class="marquee-wrap" aria-hidden="true">
+    <div class="marquee-track">
+        <!-- first copy -->
+        <span class="marquee-item">Diseño Web SEO<span class="marquee-dot"></span></span>
+        <span class="marquee-item">Meta Ads<span class="marquee-dot"></span></span>
+        <span class="marquee-item">Automatización con IA<span class="marquee-dot"></span></span>
+        <span class="marquee-item">Google Calendar<span class="marquee-dot"></span></span>
+        <span class="marquee-item">Asistentes Virtuales<span class="marquee-dot"></span></span>
+        <span class="marquee-item">n8n Workflows<span class="marquee-dot"></span></span>
+        <span class="marquee-item">Core Web Vitals<span class="marquee-dot"></span></span>
+        <span class="marquee-item">WhatsApp Business<span class="marquee-dot"></span></span>
+        <span class="marquee-item">Captación de Leads<span class="marquee-dot"></span></span>
+        <!-- duplicate for seamless loop -->
+        <span class="marquee-item">Diseño Web SEO<span class="marquee-dot"></span></span>
+        <span class="marquee-item">Meta Ads<span class="marquee-dot"></span></span>
+        <span class="marquee-item">Automatización con IA<span class="marquee-dot"></span></span>
+        <span class="marquee-item">Google Calendar<span class="marquee-dot"></span></span>
+        <span class="marquee-item">Asistentes Virtuales<span class="marquee-dot"></span></span>
+        <span class="marquee-item">n8n Workflows<span class="marquee-dot"></span></span>
+        <span class="marquee-item">Core Web Vitals<span class="marquee-dot"></span></span>
+        <span class="marquee-item">WhatsApp Business<span class="marquee-dot"></span></span>
+        <span class="marquee-item">Captación de Leads<span class="marquee-dot"></span></span>
+    </div>
+</div>
+
+
+<!-- ══════════════ SERVICIOS ══════════════ -->
+<section id="servicios" aria-labelledby="svc-heading">
+    <div class="section">
+        <div class="section-header r">
+            <p class="tag">Lo que hacemos</p>
+            <h2 id="svc-heading" class="display" style="font-size:clamp(3rem,6vw,5rem);color:#fff;margin-top:.75rem">
+                Tres pilares para<br>dominar tu mercado
+            </h2>
+        </div>
+
+        <div class="services-grid r">
+            <!-- Card 1 -->
+            <article class="svc-card">
+                <span class="svc-num">01</span>
+                <div class="svc-icon"><i class="fas fa-chart-line"></i></div>
+                <h3 class="svc-title">Diseño Web Optimizado para Google</h3>
+                <p class="svc-text">Páginas rápidas, responsivas y construidas con semántica HTML5 correcta. Tus clientes te encontrarán — no solo existirás en internet.</p>
+                <ul class="svc-list">
+                    <li>Core Web Vitals optimizados</li>
+                    <li>Mobile-first responsive</li>
+                    <li>SEO técnico desde cero</li>
+                    <li>Velocidad de carga &lt; 1.5s</li>
+                </ul>
+            </article>
+            <!-- Card 2 -->
+            <article class="svc-card">
+                <span class="svc-num">02</span>
+                <div class="svc-icon" style="color:var(--orange);background:rgba(249,115,22,.08);border-color:rgba(249,115,22,.25)"><i class="fab fa-meta"></i></div>
+                <h3 class="svc-title">Campañas de Meta Ads de Alto ROI</h3>
+                <p class="svc-text">Segmentación precisa en Facebook e Instagram para atraer exactamente a quien compra. Gestión continua para escalar lo que funciona.</p>
+                <ul class="svc-list">
+                    <li>Audiencias lookalike avanzadas</li>
+                    <li>A/B testing de creatividades</li>
+                    <li>Optimización por conversiones</li>
+                    <li>Reportes semanales de ROI</li>
+                </ul>
+            </article>
+            <!-- Card 3 -->
+            <article class="svc-card">
+                <span class="svc-num">03</span>
+                <div class="svc-icon" style="color:#a78bfa;background:rgba(167,139,250,.08);border-color:rgba(167,139,250,.25)"><i class="fas fa-robot"></i></div>
+                <h3 class="svc-title">Asistentes Virtuales con IA</h3>
+                <p class="svc-text">Bots inteligentes que califican leads, responden preguntas y agendan citas automáticamente — mientras tú duermes o atiendes a otros clientes.</p>
+                <ul class="svc-list">
+                    <li>Integración WhatsApp Business</li>
+                    <li>Conexión Google Calendar</li>
+                    <li>Pipeline automatizado en n8n</li>
+                    <li>Disponibilidad 24/7</li>
+                </ul>
+            </article>
+        </div>
+    </div>
+</section>
+
+<hr class="hdiv">
+
+
+<!-- ══════════════ AI DEMO ══════════════ -->
+<section id="asistente" aria-labelledby="demo-heading">
+    <div class="section">
+        <div class="demo-grid">
+            <!-- Left -->
+            <div>
+                <p class="tag r">Automatización con IA</p>
+                <h2 id="demo-heading" class="display r d1" style="font-size:clamp(2.5rem,5vw,4.2rem);color:#fff;margin:.75rem 0 1.25rem">
+                    Tu negocio<br>no cierra nunca.<br><span style="color:var(--orange)">Agenda citas<br>mientras duermes.</span>
+                </h2>
+                <p class="r d2" style="color:var(--muted);font-size:.9rem;line-height:1.75;font-weight:300;max-width:420px">
+                    Integramos asistentes de IA en tu web o WhatsApp, conectados a <strong style="color:#fff">n8n</strong> y <strong style="color:#fff">Google Sheets / Calendar</strong>. El cliente reserva — tú recibes la notificación.
+                </p>
+                <div class="feature-list r d2">
+                    <div class="feat-row">
+                        <div class="feat-icon blue"><i class="fas fa-bolt"></i></div>
+                        <div class="feat-body">
+                            <h4>Flujo automatizado con n8n</h4>
+                            <p>Captura datos, los guarda en Sheets y crea el evento en Calendar sin intervención.</p>
+                        </div>
+                    </div>
+                    <div class="feat-row">
+                        <div class="feat-icon green"><i class="fab fa-whatsapp"></i></div>
+                        <div class="feat-body">
+                            <h4>Disponible en WhatsApp y tu web</h4>
+                            <p>El mismo bot opera en ambos canales de forma simultánea.</p>
+                        </div>
+                    </div>
+                    <div class="feat-row">
+                        <div class="feat-icon purple"><i class="fas fa-table-columns"></i></div>
+                        <div class="feat-body">
+                            <h4>Dashboard de leads en tiempo real</h4>
+                            <p>Cada contacto registrado con nombre, teléfono, email y cita solicitada.</p>
+                        </div>
+                    </div>
+                </div>
+                <a href="#contacto" class="btn-primary r d3">Quiero este sistema <i class="fas fa-arrow-right fa-xs"></i></a>
+            </div>
+
+            <!-- Chat widget -->
+            <div class="r d2">
+                <div class="chat-shell">
+                    <div class="chat-top">
+                        <div class="chat-avatar"><i class="fas fa-robot"></i></div>
+                        <div>
+                            <div class="chat-name">NexusBot</div>
+                            <div class="chat-status"><span class="online-dot"></span> En línea ahora</div>
+                        </div>
+                        <div style="margin-left:auto;display:flex;gap:.5rem;color:rgba(255,255,255,.3);font-size:.8rem">
+                            <i class="fas fa-minus"></i><i class="fas fa-xmark"></i>
+                        </div>
+                    </div>
+                    <div class="chat-msgs">
+                        <div class="cm cm-bot">¡Hola! 👋 Soy el asistente de <strong>NexusAI</strong>. ¿En qué te puedo ayudar?</div>
+                        <div class="cm cm-user">Quiero agendar una reunión esta semana.</div>
+                        <div class="cm cm-bot">¡Perfecto! Tengo disponibilidad el <strong>martes a las 11:00</strong> o <strong>jueves a las 16:00</strong>. ¿Cuál prefieres?</div>
+                        <div class="cm cm-user">El jueves, mejor.</div>
+                        <div class="cm cm-bot">Reservado ✅ <strong>Jueves a las 16:00</strong>. Dame tu nombre y email para enviarte la invitación.</div>
+                        <div class="cm cm-bot" style="background:rgba(37,99,235,.08)">
+                            <div class="typing-dots"><span class="td"></span><span class="td"></span><span class="td"></span></div>
+                        </div>
+                    </div>
+                    <div class="chat-input-row">
+                        <input type="text" class="chat-inp" placeholder="Escribe aquí..." disabled>
+                        <button class="chat-send" disabled aria-label="Enviar"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                    <p class="chat-note">Demo visual — integración real disponible en tu plan</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="hdiv">
+
+
+<!-- ══════════════ PROCESO ══════════════ -->
+<section id="proceso" aria-labelledby="proc-heading">
+    <div class="section">
+        <div class="section-header r" style="text-align:center">
+            <p class="tag" style="justify-content:center">Cómo trabajamos</p>
+            <h2 id="proc-heading" class="display r d1" style="font-size:clamp(2.5rem,5vw,4rem);color:#fff;margin-top:.75rem">Empieza en 3 pasos</h2>
+        </div>
+        <div class="process-row">
+            <div class="proc-item r">
+                <div class="proc-num">01</div>
+                <h3 class="proc-title">Auditoría Gratuita</h3>
+                <p class="proc-text">Analizamos tu negocio, web actual y competencia. Sin costo ni compromiso. Solo claridad sobre qué hacer.</p>
+            </div>
+            <div class="proc-item r d1">
+                <div class="proc-num">02</div>
+                <h3 class="proc-title">Estrategia Personalizada</h3>
+                <p class="proc-text">Plan a medida: web, ads y automatización, adaptado a tu presupuesto y objetivos reales.</p>
+            </div>
+            <div class="proc-item r d2">
+                <div class="proc-num">03</div>
+                <h3 class="proc-title">Implementación y Resultados</h3>
+                <p class="proc-text">Ejecutamos, medimos y optimizamos cada semana. Tú te enfocas en tu negocio mientras nosotros escalamos.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════ PRECIOS ══════════════ -->
+<section id="precios" aria-labelledby="precios-heading">
+    <div class="section">
+        <div class="section-header r" style="text-align:center">
+            <p class="tag" style="justify-content:center">Planes y Precios</p>
+            <h2 id="precios-heading" class="display r d1" style="font-size:clamp(2.5rem,5vw,4rem);color:#fff;margin-top:.75rem">
+                Inversión clara,<br><span style="color:var(--orange)">resultados reales</span>
+            </h2>
+            <p class="r d2" style="color:var(--muted);font-size:.9rem;max-width:500px;margin:.75rem auto 0">Sin letras pequeñas. Sin sorpresas. Elige el plan que encaja con tu negocio.</p>
+        </div>
+
+        <div class="pricing-grid">
+            <!-- Plan 1 -->
+            <article class="price-card r">
+                <div class="price-icon" style="background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.25);color:var(--blue-hi)"><i class="fas fa-globe"></i></div>
+                <div class="price-name">Web SEO</div>
+                <div class="price-amount">800€ <span>pago único</span></div>
+                <p class="price-desc">Tu web profesional, rápida y lista para posicionarse en Google desde el primer día.</p>
+                <ul class="price-features">
+                    <li>Diseño personalizado responsive</li>
+                    <li>SEO técnico completo</li>
+                    <li>Velocidad &lt; 1.5s (Core Web Vitals)</li>
+                    <li>Formulario de captación integrado</li>
+                    <li>1 mes de soporte incluido</li>
+                </ul>
+                <a href="#contacto" class="btn-price btn-price-outline">Quiero mi web</a>
+            </article>
+
+            <!-- Plan 2 — Featured -->
+            <article class="price-card featured r d1">
+                <span class="price-badge">Más popular</span>
+                <div class="price-icon" style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);color:var(--orange)"><i class="fas fa-layer-group"></i></div>
+                <div class="price-name">Pack Completo</div>
+                <div class="price-amount">1.500€ <span>+ 300€/mes</span></div>
+                <p class="price-desc">La solución integral: web, campañas y asistente IA trabajando juntos para escalar tu negocio.</p>
+                <ul class="price-features">
+                    <li>Todo el Plan Web SEO</li>
+                    <li>Gestión Meta Ads mensual</li>
+                    <li>Asistente IA en WhatsApp + web</li>
+                    <li>Google Calendar automatizado</li>
+                    <li>Dashboard de leads en Sheets</li>
+                    <li>Soporte prioritario</li>
+                </ul>
+                <a href="#contacto" class="btn-price btn-price-solid">Empezar ahora</a>
+            </article>
+
+            <!-- Plan 3 -->
+            <article class="price-card r d2">
+                <div class="price-icon" style="background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:#a78bfa"><i class="fab fa-meta"></i></div>
+                <div class="price-name">Meta Ads</div>
+                <div class="price-amount">300€ <span>/mes</span></div>
+                <p class="price-desc">Gestión profesional de tus campañas en Facebook e Instagram para maximizar el ROI.</p>
+                <ul class="price-features">
+                    <li>Configuración inicial de campañas</li>
+                    <li>Segmentación avanzada de audiencias</li>
+                    <li>A/B testing de creatividades</li>
+                    <li>Optimización semanal</li>
+                    <li>Reporte mensual de resultados</li>
+                </ul>
+                <a href="#contacto" class="btn-price btn-price-outline">Quiero más leads</a>
+            </article>
+        </div>
+
+        <p class="r" style="text-align:center;color:var(--dim);font-size:.8rem;margin-top:2rem">
+            ¿Necesitas algo personalizado? <a href="#contacto" style="color:var(--blue-hi);text-decoration:underline">Cuéntanos tu caso</a> y hacemos un presupuesto a medida.
+        </p>
+    </div>
+</section>
+
+<hr class="hdiv">
+
+
+<!-- ══════════════ TESTIMONIOS ══════════════ -->
+<section id="testimonios" aria-labelledby="testi-heading">
+    <div class="section">
+        <div class="section-header r" style="text-align:center">
+            <p class="tag" style="justify-content:center">Lo que dicen nuestros clientes</p>
+            <h2 id="testi-heading" class="display r d1" style="font-size:clamp(2.5rem,5vw,4rem);color:#fff;margin-top:.75rem">
+                Resultados que<br><span style="color:var(--orange)">hablan solos</span>
+            </h2>
+        </div>
+
+        <div class="testi-grid">
+            <article class="testi-card r">
+                <div class="testi-stars">★★★★★</div>
+                <p class="testi-text">Triplicamos las citas online en menos de 2 meses. El asistente de IA responde a los pacientes a las 2 de la mañana y ya tenemos la agenda llena con semanas de antelación.</p>
+                <div class="testi-author">
+                    <div class="testi-avatar" style="background:linear-gradient(135deg,#2563eb,#1e40af)">C</div>
+                    <div>
+                        <div class="testi-name">Carlos Mendoza</div>
+                        <div class="testi-role">Director — Clínica Dental Sonrisa</div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="testi-card r d1">
+                <div class="testi-stars">★★★★★</div>
+                <p class="testi-text">El ROI de nuestras campañas de Meta Ads pasó de casi nada a un 420% en el cuarto mes. Antes tirábamos el presupuesto. Ahora cada euro invertido nos devuelve cuatro.</p>
+                <div class="testi-author">
+                    <div class="testi-avatar" style="background:linear-gradient(135deg,#f97316,#ea580c)">L</div>
+                    <div>
+                        <div class="testi-name">Laura Rodríguez</div>
+                        <div class="testi-role">Fundadora — Academia Online ProSkill</div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="testi-card r d2">
+                <div class="testi-stars">★★★★★</div>
+                <p class="testi-text">El bot agenda unas 15 reservas por semana sin que yo toque nada. La web nueva carga en un segundo y ya aparezco en los primeros resultados de Google de mi ciudad.</p>
+                <div class="testi-author">
+                    <div class="testi-avatar" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">A</div>
+                    <div>
+                        <div class="testi-name">Andrés Palomino</div>
+                        <div class="testi-role">Propietario — Restaurante El Rincón</div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<hr class="hdiv">
+
+
+<!-- ══════════════ FAQ ══════════════ -->
+<section id="faq" aria-labelledby="faq-heading">
+    <div class="section">
+        <div class="section-header r" style="text-align:center;margin-bottom:3rem">
+            <p class="tag" style="justify-content:center">Preguntas frecuentes</p>
+            <h2 id="faq-heading" class="display r d1" style="font-size:clamp(2.5rem,5vw,4rem);color:#fff;margin-top:.75rem">FAQ</h2>
+        </div>
+
+        <div class="faq-list r">
+            <div class="faq-item">
+                <button class="faq-q" aria-expanded="false">
+                    ¿Cuánto tarda en estar lista mi web?
+                    <i class="fas fa-plus faq-icon"></i>
+                </button>
+                <div class="faq-a">Entre 7 y 14 días hábiles desde que nos das el contenido (textos, imágenes, logo). Trabajamos con un proceso ágil: diseño → revisión → entrega. Sin sorpresas.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" aria-expanded="false">
+                    ¿Necesito conocimientos técnicos para usar el asistente virtual?
+                    <i class="fas fa-plus faq-icon"></i>
+                </button>
+                <div class="faq-a">Para nada. Nosotros lo configuramos todo: el bot, la conexión con WhatsApp Business, Google Calendar y Google Sheets. Tú solo ves las citas aparecer en tu calendario automáticamente.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" aria-expanded="false">
+                    ¿Puedo cancelar la gestión de Meta Ads en cualquier momento?
+                    <i class="fas fa-plus faq-icon"></i>
+                </button>
+                <div class="faq-a">Sí. No hay permanencias. Trabajamos mes a mes con aviso de 15 días. Sin contratos trampa. Si no ves resultados, no tiene sentido que sigas pagando.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" aria-expanded="false">
+                    ¿El asistente virtual funciona en WhatsApp Business?
+                    <i class="fas fa-plus faq-icon"></i>
+                </button>
+                <div class="faq-a">Sí. Se conecta directamente a tu número de WhatsApp Business a través de la API oficial de Meta. Tus clientes escriben como siempre y el bot responde al instante, sin que ellos noten la diferencia.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" aria-expanded="false">
+                    ¿Qué incluye exactamente la auditoría gratuita?
+                    <i class="fas fa-plus faq-icon"></i>
+                </button>
+                <div class="faq-a">Analizamos tu web actual (velocidad, SEO, usabilidad), tus competidores más cercanos en Google y tu presencia en redes. Al final te entregamos un informe con los 3 puntos críticos a mejorar y una hoja de ruta clara. Sin coste ni compromiso.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="hdiv">
+
+
+<!-- ══════════════ CONTACTO ══════════════ -->
+<section id="contacto" aria-labelledby="contact-heading">
+    <div class="section">
+        <div class="contact-grid">
+            <!-- Left: info -->
+            <div>
+                <p class="tag r">Hablemos</p>
+                <h2 id="contact-heading" class="display r d1" style="font-size:clamp(2.5rem,5vw,4rem);color:#fff;margin:.75rem 0 1.5rem">
+                    ¿Listo para<br>el siguiente<br><span style="color:var(--orange)">nivel?</span>
+                </h2>
+                <p class="r d2" style="color:var(--muted);font-size:.875rem;line-height:1.75;font-weight:300;margin-bottom:2rem">
+                    Déjanos tus datos y te contactamos para una sesión estratégica gratuita. Sin rodeos, sin spam.
+                </p>
+                <div class="contact-info r d2">
+                    <a href="https://wa.me/34612220873" target="_blank" rel="noopener noreferrer" class="info-card" style="text-decoration:none">
+                        <div class="info-ic wa"><i class="fab fa-whatsapp"></i></div>
+                        <div class="info-text">
+                            <strong>WhatsApp Directo</strong>
+                            <span>+34 612 220 873 — respuesta en minutos</span>
+                        </div>
+                    </a>
+                    <div class="info-card">
+                        <div class="info-ic bl"><i class="fas fa-clock"></i></div>
+                        <div class="info-text">
+                            <strong>Respondemos en &lt; 24 horas</strong>
+                            <span>Lunes a viernes, 9:00 – 20:00</span>
+                        </div>
+                    </div>
+                    <div class="big-cta-box r d3">
+                        <h3>Auditoría 100% Gratuita</h3>
+                        <p>Analizamos tu negocio y te decimos exactamente qué hacer para crecer. Sin compromisos.</p>
+                        <a href="#" onclick="document.getElementById('nombre').focus();return false;" class="btn-primary" style="display:inline-flex;font-size:.85rem;padding:.75rem 1.75rem">
+                            Quiero mi auditoría <i class="fas fa-arrow-right fa-xs"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: form -->
+            <div class="r d1">
+                <div class="form-wrap">
+                    <form id="lead-form" action="http://localhost:5678/webhook/landing-nexusai" method="POST" novalidate aria-label="Formulario de contacto">
+                        <div class="fi">
+                            <label for="nombre">Nombre Completo</label>
+                            <input type="text" id="nombre" name="nombre" placeholder="Ej: María García" required autocomplete="name">
+                        </div>
+                        <div class="fi">
+                            <label for="telefono">Teléfono Celular</label>
+                            <input type="tel" id="telefono" name="telefono" placeholder="+34 612 220 873" required autocomplete="tel">
+                        </div>
+                        <div class="fi">
+                            <label for="email">Correo Electrónico</label>
+                            <input type="email" id="email" name="email" placeholder="tu@empresa.com" required autocomplete="email">
+                        </div>
+                        <div class="fi">
+                            <label for="negocio">¿Para qué negocio necesitas ayuda?</label>
+                            <textarea id="negocio" name="negocio" rows="4" placeholder="Cuéntanos brevemente sobre tu negocio y qué quieres lograr..." required></textarea>
+                        </div>
+                        <button type="submit" id="submit-btn" class="btn-submit">
+                            <i class="fas fa-paper-plane"></i> Enviar y Solicitar Cita
+                        </button>
+                        <div id="msg-ok" class="msg-ok"><i class="fas fa-circle-check"></i> ¡Recibido! Te contactamos en menos de 24 horas.</div>
+                        <div id="msg-err" class="msg-err"><i class="fas fa-triangle-exclamation"></i> Algo salió mal. Escríbenos por WhatsApp.</div>
+                        <p class="privacy"><i class="fas fa-lock" style="opacity:.5"></i> Datos 100% seguros. <a href="privacidad.html" style="color:var(--blue-hi);text-decoration:underline">Política de privacidad</a>.</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer>
+    <div class="foot-inner">
+        <div class="foot-logo" style="display:flex;align-items:center;gap:.6rem">
+            <svg width="30" height="30" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect width="36" height="36" rx="9" fill="url(#lg2)"/>
+                <circle cx="10" cy="18" r="3" fill="white" opacity=".9"/>
+                <circle cx="26" cy="10" r="3" fill="white" opacity=".9"/>
+                <circle cx="26" cy="26" r="3" fill="white" opacity=".9"/>
+                <line x1="12.6" y1="16.6" x2="23.4" y2="11.4" stroke="white" stroke-width="1.5" stroke-opacity=".6"/>
+                <line x1="12.6" y1="19.4" x2="23.4" y2="24.6" stroke="white" stroke-width="1.5" stroke-opacity=".6"/>
+                <line x1="26" y1="13" x2="26" y2="23" stroke="white" stroke-width="1.5" stroke-opacity=".35"/>
+                <defs>
+                    <linearGradient id="lg2" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#2563eb"/><stop offset="1" stop-color="#f97316"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            Nexus<span>AI</span>
+        </div>
+        <div class="foot-links">
+            <a href="#servicios">Servicios</a>
+            <a href="#precios">Precios</a>
+            <a href="#contacto">Contacto</a>
+            <a href="privacidad.html">Privacidad</a>
+            <a href="https://wa.me/34612220873" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+        <p class="foot-copy">&copy; 2025 NexusAI Digital — Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+
+<!-- ══════════════ WA FLOAT ══════════════ -->
+<a href="https://wa.me/34612220873" id="wa" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+</a>
+<span id="wa-label">¡Escríbenos!</span>
+
+
+<!-- ══════════════ SCRIPTS ══════════════ -->
+<script>
+(function(){
+    'use strict';
+
+    // ── Custom cursor ──
+    const cur = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.left = mx+'px'; cur.style.top = my+'px'; });
+    (function animRing(){
+        rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+        ring.style.left = rx+'px'; ring.style.top = ry+'px';
+        requestAnimationFrame(animRing);
+    })();
+
+    // ── Navbar ──
+    const nav = document.getElementById('nav');
+    addEventListener('scroll', () => nav.classList.toggle('stuck', scrollY > 40), {passive:true});
+
+    // ── Mobile menu ──
+    const mobBtn = document.getElementById('mob-btn');
+    const mobClose = document.getElementById('mob-close');
+    const mobMenu = document.getElementById('mob-menu');
+    mobBtn.addEventListener('click', () => mobMenu.classList.add('open'));
+    mobClose.addEventListener('click', () => mobMenu.classList.remove('open'));
+    mobMenu.querySelectorAll('.mob-link').forEach(l => l.addEventListener('click', () => mobMenu.classList.remove('open')));
+
+    // ── Reveal on scroll ──
+    const els = document.querySelectorAll('.r');
+    const ro = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); }), {threshold:.12});
+    els.forEach(e => ro.observe(e));
+
+    // ── Counters ──
+    document.querySelectorAll('[data-count]').forEach(el => {
+        const co = new IntersectionObserver(([e]) => {
+            if(!e.isIntersecting) return;
+            const target = +el.dataset.count, pre = el.dataset.prefix||'', suf = el.dataset.suffix||'';
+            let n = 0, step = target / (1800/16);
+            const t = setInterval(() => { n = Math.min(n+step, target); el.textContent = pre+Math.floor(n)+suf; if(n>=target) clearInterval(t); }, 16);
+            co.unobserve(el);
+        }, {threshold:.5});
+        co.observe(el);
+    });
+
+    // ── FAQ accordion ──
+    document.querySelectorAll('.faq-q').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const item = btn.closest('.faq-item');
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item.open').forEach(el => { el.classList.remove('open'); el.querySelector('.faq-q').setAttribute('aria-expanded','false'); });
+            if (!isOpen) { item.classList.add('open'); btn.setAttribute('aria-expanded','true'); }
+        });
+    });
+
+    // ── Form ──
+    const form = document.getElementById('lead-form');
+    const btn = document.getElementById('submit-btn');
+    const ok = document.getElementById('msg-ok');
+    const err = document.getElementById('msg-err');
+
+    form.addEventListener('submit', async e => {
+        e.preventDefault();
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando…';
+        ok.style.display = 'none'; err.style.display = 'none';
+        try {
+            const res = await fetch(form.action, {
+                method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ nombre: form.nombre.value.trim(), telefono: form.telefono.value.trim(), email: form.email.value.trim(), negocio: form.negocio.value.trim(), fecha: new Date().toISOString(), fuente:'landing-nexusai' })
+            });
+            if(res.ok){ form.reset(); window.location.href='gracias.html'; }
+            else throw '';
+        } catch(_){ err.style.display='block'; }
+        finally { btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i> Enviar y Solicitar Cita'; }
+    });
+})();
+</script>
+</body>
+</html>
